@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de personnalité culinaire</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    h1 {
+    font-family: "Brush Script MT", cursive;
+    color: #6f957b;
+    font-size: 80px;
+    font-weight: normal;
+}
+
+h2 {
+    font-family: 'Garamond', serif;
+    color: #8dbf9d;
+    font-size: 30px;
+}
+
+p {
+    font-family: 'Times New Roman', Times, serif;
+    color: #545454;
+    font-size: 20px;
+
+}
+
+#quiz-container {
+    /* Contrôle la largeur et la hauteur maximales du conteneur */
+    max-width: 1000px;
+    margin: 50px;
+    /* Marge autour du conteneur */
+}
+
+#result-container {
+    display: none;
+    margin-top: 100px;
+}
+
+#result-container img {
+    max-width: 100%;
+    /* Das Bild wird maximal so breit wie sein Container */
+    max-height: 200px;
+    /* Hier kannst du die maximale Höhe des Bildes einstellen */
+    width: auto;
+    /* Das Bild passt sich automatisch der Breite an */
+    height: auto;
+    /* Das Bild passt sich automatisch der Höhe an */
+}
+
+#recipe-list {
+    display: flex;
+    /* Anzeigen der Bilder nebeneinander */
+    flex-direction: row;
+    /* Anordnung der Bilder in einer Zeile */
+    justify-content: center;
+    /* Zentrieren der Bilder horizontal */
+}
+
+#recipe-list a {
+    margin-right: 10px;
+    /* Abstand zwischen den Bildern */
+}
+
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Trouve ta personnalité culinaire!</h1>
+    <h2>RÉPONDEZ AUX QUESTIONS SUIVANTES:</h2>
+
+    <div id="question-container">
+        <!-- Questions will be inserted here dynamically -->
+    </div>
+    
+    <!-- Warnungsfeld für fehlende Antwort -->
+    <div id="alert-box" style="display: none;">Choisis une réponse.</div>
+
+    <button onclick="nextQuestion()">Continuer</button>
+</div>
+
+<div id="result-container" style="display: none;">
+    <h2>TA PERSONNALITÉ CULINAIRE EST:</h2>
+    
+    <p id="result-text"></p>
+
+    <h2>RECOMMANDATION DES RECETTES</h2>
+    <div id="recipe-list"></div>
+</div>
+
+<script>
+    const questions = [
+    {
+        question: "Qu'est-ce que tu préfères au petit déjeuner?",
+        options: ["Cornflakes", "Avocado Toast", "Pain à la confiture", "Starbucks Caffé", "Protein Shake"]
+    },
+    {
+        question: "Qu'est-ce que tu manges au dessert ?",
+        options: ["Glace à la vanille", "Nicecream", "Wähie", "Frozen Yogurt", "Yogourt grecque"]
+    },
+    {
+        question: "Quel est ton plat préféré?",
+        options: ["Pizza", "Salade Grecque", "Entrecôte", "Sushi", "Poulet et riz"]
+    },
+    {
+        question: "Qu'est-ce que tu manges pendant les vacances?",
+        options: ["McDonalds", "Je cuisine avec des ingrédients locaux.", "J'emporte mon repas.", "Les repas locaux dans un fancy restaurant.", "Je me nourris de shakes protéinés."]
+    },
+    {
+        question: "Quel est ton boisson préféré?",
+        options: ["Cola", "Mate", "Bière", "Matcha", "Isostar"]
+    },
+    {
+        question: "Quel est ton snack préféré ?",
+        options: ["Chips", "Granola bar", "Anneaux de pomme", "Café", "Protein bar"]
+    },
+    {
+        question: "Quel restaurant choisirais-tu ?",
+        options: ["Pizzeria Giovanni", "The Green Vegan", "Chez Maman", "Thai Sing", "Salad N'Wraps"]
+    },
+    {
+        question: "Qu'est-ce que tu aimerais faire pendant un après-midi ensoleillé ?",
+        options: ["Piscine", "Pique-nique au parc", "Faire une randonnée", "Shopping dans la ville", "Faire du jogging"]
+    },
+    {
+        question: "Qu'est-ce que tu fais pendant les vacances ?",
+        options: ["City trip à London", "Road trip", "Camping au bord d'un lac", "Aller à Dubai.", "Aller voir le match de mon équipe préférée."]
+    },
+    {
+        question: "Qu'est-ce que tu fais vendredi soir?",
+        options: ["Netflix", "Faire du crochet ou lire", "Jouer au jass", "Aller au club", "Je m'entraîne."]
+    }
+];
+const personalities = [
+    {
+        name: "0815",
+        description: "Tu aimes le plus ce que tu connais ! Ta créativité est limitée lorsqu'il s'agit de nourriture et comme c'est fatigant de trop réfléchir, tu te tournes simplement vers le choix standard. Avec la pizza, les burgers ou les pâtes, on ne peut pas se tromper avec toi !",
+        recipes: [
+            { image: "https://foodpluswords.com/wp-content/uploads/2023/11/CHAI-TEA-LATTE-BY-BITES-WITH-BRI.jpg", url: "https://foodpluswords.com/starbucks-drink-recipes" },
+            { image: "https://www.kitchensanctuary.com/wp-content/uploads/2023/07/Pesto-Pasta-tall-FS.jpg", url: "https://www.kitchensanctuary.com/pesto-pasta-recipe/%22" },
+            { image: "https://www.gofeminin.de/wp-content/uploads/sites/2/2023/01/2055147_w1200cxt0cyt0cxb1500cyb982.jpg", url: "https://www.gofeminin.de/kochen-backen/lava-cake-rezept-s4012404.html#utm_source=push-web&utm_medium=push&utm_campaign=gf-push-web%22]" }
+        ]
+    },
+    {
+        name: "Granola Girl",
+        description: "Les mots « bio » et « ingrédients naturels » te font véritablement frissonner, car ils sont les piliers de toute ton existence ! Pendant Corona, tu es entièrement tombée dans la Visco-Girl-Influencer-Bubble. Souhaitant être le plus proche possible de la nature, tu produis avec enthousiasme tes repas à la maison, en exagérant parfois un peu avec la créativité. Plus c'est extraordinaire et fait à la maison, mieux c'est !",
+        recipes: [
+            { image: "https://www.einzigartig-selbstgemacht.at/wp-content/uploads/2019/03/gesundes-granola-rezept-selber-machen4-1170x878.jpg", url: "https://www.einzigartig-selbstgemacht.at/rezept-gesundes-granola-selber-machen/" },
+            { image: "https://www.lowcarbrezepte.org/media/zoo/images/mexikanischer-quinoa-salat_f94835aa7de0cc57752f9763f600cb85.jpg", url: "https://www.lowcarbrezepte.org/rezepte/mexikanischer-quinoa-salat.html" },
+            { image: "https://www.eatbetter.de/sites/eatbetter.de/files/styles/facebook/public/2020-04/chiapudding_mit_kokos_und_beeren_58924.jpg?h=8d0de446&itok=7VhE2FmQ", url: "https://www.eatbetter.de/rezepte/chia-pudding-grundrezept-mit-kokosmilch" }
+        ]
+    },
+    {
+        name: "Bünzli",
+        description: "Ton horizon ne s'étend pas plus loin que le Röstigraben, et tu trouves cela important et juste. Avec fierté, tu te considères comme un amant de la solide cuisine suisse. Pour souligner ce fait, tu aimes aussi souvent porter ta chemise Edelweiss et tes chaussures On lorsque tu te rends à la maison pour te laisser cuisiner par maman.",
+        recipes: [
+            { image: "https://steffis-chuchichistli.ch/wp-content/uploads/2021/09/Thurgauer-Suessmostcreme1-1028x1536.jpg.webp", url: "https://steffis-chuchichistli.ch/recipe/thurgauer-suessmostcreme/" },
+            { image: "https://images.squarespace-cdn.com/content/v1/55cc5010e4b0d7b9ee00a037/1528309960536-6TM9SHLIDA9ZDA8092TE/fullsizeoutput_22a1.jpeg?format=1500w", url: "https://www.helvetickitchen.com/recipes/vogelheu" },
+            { image: "https://images.squarespace-cdn.com/content/v1/55cc5010e4b0d7b9ee00a037/1549397949102-CLXN6PIHPBZDKA0Y64RA/schinkengipfeli?format=1500w", url: "https://www.helvetickitchen.com/recipes/schinkengipfeli" }
+        ]
+    },
+    {
+        name: "Miss International",
+        description: "Ta personnalité consiste à connaître le plus de langues possible et à voyager dans les pays. Tu voyages dans le monde entier, à la recherche des nouvelles trends. Il peut donc arriver que tu prennes l'avion pour la Chine juste pour déguster un matcha viral, tes followers Instagram avec toi à toute heure.",
+        recipes: [
+            { image: "https://simshomekitchen.com/wp-content/uploads/2024/03/crookie-recipe-scaled.jpg", url: "https://simshomekitchen.com/cookie-croissant/#recipe" },
+            { image: "https://images.squarespace-cdn.com/content/v1/60a7f0a88306cd37a2b6e189/1630183451223-CH40FQKSZCPVNJXEZNVH/Matcha+Panna+Cotta-3.jpg?format=1500w", url: "https://www.thenerdiebaker.com/recipes/matcha-panna-cotta" },
+            { image: "https://images.squarespace-cdn.com/content/v1/5280c154e4b05645e635cf76/1559759361645-PSFYJGHZJKDOUCK43NE4/ke17ZwdGBToddI8pDm48kCHChmuivJZ1Va5ov3ZJeg17gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z4YTzHvnKhyp6Da-NYroOW3ZGjoBKy3azqku80C789l0ouw-8l5B_J38LMU7OZFvYcSGirBhY_3j1yQtntvGS73bypqQ-qjSV5umPUlGbQFAw/This+easy+vegan+sushi+recipe+can+be+pulled+together+in+less+than+30+minutes.+It's+delicious%2C+healthy%2C+and+easy+to+make.", url: "https://thishealthytable.com/blog/vegetarian-sushi/" }
+        ]
+    },
+    {
+        name: "Fitness guru",
+        description: "PROTEINES ! C'est tout ce qui compte pour toi. Tu ne manges que pour les Gains. C'est bon pour toi !",
+        recipes: [
+            { image: "https://trickytine.com/wp-content/uploads/2020/02/Kichererbsen-Curry-trickytine-4-1.jpg", url: "https://trickytine.com/kichererbsen-curry-rezept/" },
+            { image: "https://mycarbcrew.com/wp-content/uploads/2022/10/DSC_0623-scaled.jpg", url: "https://mycarbcrew.com/goetterquark-einfaches-dessert/" },
+            { image: "https://genussdeslebens.de/wp-content/uploads/2022/03/DSC09012-1.jpg.webp", url: "https://genussdeslebens.de/linsensalat-mit-feta-und-granatapfelkernen/" }
+        ]
+    }
+];
+let currentQuestion = 0;
+const userAnswers = [];
+function loadQuestion() {
+    const questionContainer = document.getElementById('question-container');
+    const currentQuestionData = questions[currentQuestion];
+    questionContainer.innerHTML = `<p>${currentQuestionData.question}</p>`;
+    for (let i = 0; i < currentQuestionData.options.length; i++) {
+        questionContainer.innerHTML += `
+            <input type="radio" name="answer" value="${i + 1}"> ${currentQuestionData.options[i]}<br>
+        `;
+    }
+    updateButtonLabel();
+}
+function nextQuestion() {
+    const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+    if (!selectedAnswer) {
+        alert("Choisis une réponse.");
+        return;
+    }
+    userAnswers.push(selectedAnswer.value);
+    if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+        updateButtonLabel();
+    } else {
+        showResult();
+    }
+}
+function updateButtonLabel() {
+    const button = document.querySelector('button');
+    if (currentQuestion === questions.length - 1) {
+        button.textContent = "Afficher les résultats";
+    } else {
+        button.textContent = "Continuer";
+    }
+}
+function showResult() {
+    const resultContainer = document.getElementById('result-container');
+    const resultText = document.getElementById('result-text');
+    const recipeList = document.getElementById('recipe-list');
+    const resultIndex = calculatePersonality();
+    const resultPersonality = personalities[resultIndex];
+    const updatedResultDescription = `
+        <h1>${resultPersonality.name}</h1>
+        <p>${resultPersonality.description}</p>
+    `;
+    resultText.innerHTML = updatedResultDescription;
+    recipeList.innerHTML = ""; 
+    for (let i = 0; i < resultPersonality.recipes.length; i++) {
+        const recipe = resultPersonality.recipes[i];
+        const recipeLink = document.createElement('a');
+        recipeLink.href = recipe.url;
+        recipeLink.target = '_blank';
+        const recipeImage = document.createElement('img');
+        recipeImage.src = recipe.image;
+        recipeImage.alt = `Recipe ${i + 1}`;
+        recipeImage.style.cursor = 'pointer';
+        recipeLink.appendChild(recipeImage);
+        recipeList.appendChild(recipeLink);
+        recipeList.innerHTML += "<br>";
+    }
+    resultContainer.style.display = 'block'; 
+    document.getElementById('quiz-container').style.display = 'none';
+}
+function calculatePersonality() {
+    const personalityScores = [0, 0, 0, 0, 0];
+    userAnswers.forEach(answer => {
+        personalityScores[parseInt(answer) - 1]++;
+    });
+    return personalityScores.indexOf(Math.max(...personalityScores));
+}
+
+
+loadQuestion()
+</script>
+</body>
+</html>
+
+
